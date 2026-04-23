@@ -376,7 +376,7 @@ DEBUG_TIMEOUT=5000              # Request timeout (ms)
   "mcpServers": {
     "intellij-debugger": {
       "command": "node",
-      "args": ["/Users/lukaszkurzawski2/workspace/mcp-servers/intellij-debugger/dist/index.js"],
+      "args": ["/path/to/intellij-debugger-mcp/dist/index.js"],
       "env": {
         "INTELLIJ_DEBUG_PORT": "19999"
       }
