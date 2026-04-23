@@ -1,1 +1,9 @@
-node_modules/\ndist/\nlogs/\n.idea/\n*.log
+node_modules/
+dist/
+build/
+logs/
+*.log
+.env
+.env.local
+.DS_Store
+.idea/
