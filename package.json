@@ -1,7 +1,7 @@
 {
   "name": "intellij-debugger-mcp",
   "version": "1.0.0",
-  "description": "MCP server for IntelliJ IDEA debugger integration",
+  "description": "MCP server that lets Claude control IntelliJ IDEA's debugger — set breakpoints, inspect variables, and step through code via the intellij-debug-bridge plugin.",
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
@@ -10,9 +10,17 @@
     "dev": "tsc -w",
     "test": "node --test"
   },
-  "keywords": ["mcp", "debugger", "intellij", "claude"],
-  "author": "Morpheus",
+  "keywords": ["mcp", "model-context-protocol", "claude", "claude-code", "intellij", "debugger", "java"],
+  "author": "Lukasz Kurzawski (https://github.com/kurzawsl)",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kurzawsl/intellij-debugger-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kurzawsl/intellij-debugger-mcp/issues"
+  },
+  "homepage": "https://github.com/kurzawsl/intellij-debugger-mcp#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0"
   },
