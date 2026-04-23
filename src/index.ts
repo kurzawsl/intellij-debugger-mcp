@@ -16,6 +16,17 @@ import { allTools, type ToolContext } from './tools/index.js';
 import { createResolvers } from './utils/resolver.js';
 import { isDebuggerError } from './errors.js';
 
+// Surface process-level errors so they land in Claude Code logs instead of silently
+// killing the stdio transport.
+process.on('uncaughtException', (err: Error) => {
+  console.error(JSON.stringify({ type: 'uncaughtException', error: err?.stack || String(err), ts: new Date().toISOString() }));
+  process.exit(1);
+});
+process.on('unhandledRejection', (reason: unknown) => {
+  console.error(JSON.stringify({ type: 'unhandledRejection', reason: reason instanceof Error ? reason.stack : String(reason), ts: new Date().toISOString() }));
+  process.exit(1);
+});
+
 // Initialize server
 const server = new McpServer({
   name: 'intellij-debugger',
