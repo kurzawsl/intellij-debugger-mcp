@@ -1,1 +1,1 @@
-node_modules/\ndist/\nlogs/\n.idea/\n*.log
+node_modules/\ndist/\nbuild/\nlogs/\n.idea/\n*.log\n.env
