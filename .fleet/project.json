@@ -1,0 +1,9 @@
+{
+  "schema": "fleet/project-config/v1",
+  "name": "intellij-debugger-mcp",
+  "description": "MCP server (TypeScript, Node 20+) giving Claude 41 debugger tools via the intellij-debug-bridge plugin REST API on localhost:19999.",
+  "repos": [
+    "/home/lukasz/workspace/intellij-debugger-mcp"
+  ],
+  "default_model": "claude-sonnet-5"
+}
