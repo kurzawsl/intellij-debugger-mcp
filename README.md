@@ -62,6 +62,7 @@ Optional environment variables:
 |----------|---------|-------------|
 | `INTELLIJ_DEBUG_HOST` | `localhost` | Debug Bridge host |
 | `INTELLIJ_DEBUG_PORT` | `19999` | Debug Bridge port |
+| `INTELLIJ_IDEA_COMMAND` | `idea` (Linux/Windows), `open -a "IntelliJ IDEA"` (macOS) | Launcher used by `debug_start_intellij` |
 | `DEBUG_TIMEOUT` | `5000` | Request timeout (ms) |
 
 ## Tools

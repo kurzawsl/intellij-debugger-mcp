@@ -3,12 +3,33 @@
  */
 
 import { z } from 'zod';
-import { execFile, exec } from 'child_process';
+import { execFile, exec, spawn } from 'child_process';
 import { promisify } from 'util';
 import { defineTool, textContent, errorContent } from './types.js';
 
 const execFileAsync = promisify(execFile);
 const execAsync = promisify(exec);
+
+/**
+ * Launch IntelliJ IDEA with a project, cross-platform.
+ * - macOS: `open -a "IntelliJ IDEA" <project>` (or INTELLIJ_IDEA_COMMAND if set)
+ * - Linux/Windows: INTELLIJ_IDEA_COMMAND (default: `idea`) run detached with <project> as argument
+ */
+async function launchIntelliJ(projectPath: string): Promise<string> {
+  const custom = process.env.INTELLIJ_IDEA_COMMAND;
+  if (process.platform === 'darwin' && !custom) {
+    await execFileAsync('open', ['-a', 'IntelliJ IDEA', projectPath]);
+    return 'open -a "IntelliJ IDEA"';
+  }
+  const cmd = custom || 'idea';
+  const child = spawn(cmd, [projectPath], { detached: true, stdio: 'ignore' });
+  await new Promise<void>((resolve, reject) => {
+    child.once('spawn', resolve);
+    child.once('error', reject);
+  });
+  child.unref();
+  return cmd;
+}
 
 export const healthCheckTool = defineTool({
   name: 'debug_health_check',
@@ -45,11 +66,9 @@ export const startIntelliJTool = defineTool({
   }),
   handler: async ({ projectPath, waitForStartup }, ctx) => {
     try {
-      // Use execFile with array args to prevent command injection
-      // 'open' command: open -a <application> <path>
-      await execFileAsync('open', ['-a', 'IntelliJ IDEA', projectPath]);
+      const launcher = await launchIntelliJ(projectPath);
 
-      let content = `🚀 **Launching IntelliJ IDEA**\n\nProject: ${projectPath}\n`;
+      let content = `🚀 **Launching IntelliJ IDEA** (via ${launcher})\n\nProject: ${projectPath}\n`;
 
       if (waitForStartup) {
         content += `\nWaiting for Debug Bridge to become available...\n`;
@@ -90,7 +109,10 @@ export const killIntelliJTool = defineTool({
   description: 'Kill all IntelliJ IDEA processes. Use this to restart IntelliJ or clean up.',
   handler: async () => {
     try {
-      await execAsync('pkill -f "IntelliJ IDEA" || true');
+      // Match the IDE's JVM main class so we never kill unrelated processes. The bracket
+      // trick keeps the pattern from matching the shell that runs pkill itself.
+      const pattern = process.platform === 'darwin' ? 'IntelliJ IDE[A]' : 'com.intellij.idea.Mai[n]';
+      await execAsync(`pkill -f "${pattern}" || true`);
       return textContent('✅ IntelliJ IDEA processes terminated.');
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
