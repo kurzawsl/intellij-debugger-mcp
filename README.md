@@ -40,9 +40,10 @@ npm install
 npm run build
 ```
 
-## Usage
+## Quickstart
 
-Register the server in your Claude Code MCP config (`~/.claude.json`):
+1. **Install** (above) and make sure the **intellij-debug-bridge** plugin is running in IntelliJ IDEA — it serves the REST API this server talks to on `localhost:19999`.
+2. **Register the server** in your Claude Code MCP config (`~/.claude.json`):
 
 ```json
 {
@@ -56,7 +57,65 @@ Register the server in your Claude Code MCP config (`~/.claude.json`):
 }
 ```
 
-Optional environment variables:
+3. **Verify the connection.** Call `debug_health_check` — it hits the Debug Bridge at `localhost:19999` (override with `INTELLIJ_DEBUG_HOST` / `INTELLIJ_DEBUG_PORT` if the plugin runs elsewhere):
+
+```
+✅ **Debug Bridge Connected**
+
+- Status: NO_SESSION
+- Session: none
+- Location: N/A
+```
+
+4. **Drive the debugger.** The outputs below are real, captured against the `debug-bridge-demo` sample app paused at a breakpoint in `demo.Main.accumulate()`.
+
+Set a breakpoint:
+
+```
+> debug_set_breakpoint(file: "Main.java", line: 21)
+
+Breakpoint added at Main.java:21
+```
+
+Start the app (`debug_start(config: "Main")`), wait for it to pause, then inspect the stack:
+
+```
+> debug_get_state()
+
+[Session: 0a5e1ece-bce7-4c5e-9ecc-a15fd6f1f61b]
+
+**Debug Status**: SUSPENDED
+**Session**: Main
+**Project**: debug-bridge-demo
+
+**Current Location**:
+- File: Main.java
+- Line: 21
+- Method: accumulate
+- Class: demo.Main
+
+**Stack Trace** (2 frames):
+  0. demo.Main.accumulate() at Main.java:21
+  1. demo.Main.main() at Main.java:13
+```
+
+And the variables at that point:
+
+```
+> debug_get_variables()
+
+[Session: 0a5e1ece-bce7-4c5e-9ecc-a15fd6f1f61b]
+
+**Local Variables**:
+- i: int = 0
+- total: int = 0
+```
+
+From here you can step (`debug_step_over`), evaluate expressions (`debug_evaluate`), or resume (`debug_resume`) — see the full tool list below.
+
+## Usage
+
+Configuration environment variables:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
